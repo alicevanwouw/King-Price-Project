@@ -4,33 +4,102 @@
     ViewData["Title"] = "Home page";
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
+<div class="container-fluid">
+    <div class="row table-toolbar">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <h3>Users</h3>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
+                <span class="material-symbols-outlined mt-1" >Add</span>
+            </button>           
+        </div>
+       
+    </div>
+    <div class="row table-content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success">
+                            <span class="material-symbols-outlined mt-1">edit</span>
+                        </button>                
+                        <button type="button" class="btn btn-outline-danger">
+                            <span class="material-symbols-outlined mt-1">delete</span>
+                        </button>                 
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>
+                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined">delete</span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>
+                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined">delete</span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>
+                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined">delete</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col"></div>
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary">Add User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#modal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+</script>
+
