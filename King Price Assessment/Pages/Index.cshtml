@@ -18,9 +18,9 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Groups</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -82,12 +82,28 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col"></div>
-                    <div class="col"></div>
-                </div>
-                <div class="row">
-                    <div class="col"></div>
-                    <div class="col"></div>
+                    <div class="col">
+                        <div class="d-flex flex-column">
+                            <div>
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                            </div>
+                            <div>
+                                <label for="surname" class="form-label">Surname</label>
+                                <input type="text" class="form-control" id="surname" placeholder="Surname">
+                            </div>
+                           
+                        </div>
+                       
+                    </div>
+                    <div class="col">
+                        <label for="groups" class="form-label">Groups</label>
+                        <select class="form-select" multiple aria-label="Multiple select example">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
