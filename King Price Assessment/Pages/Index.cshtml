@@ -8,7 +8,7 @@
     <div class="row table-toolbar">
         <div class="d-flex justify-content-between mt-3 g-0">
             <h3>Users</h3>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('add')">
                 <span class="material-symbols-outlined mt-1" >Add</span>
             </button>           
         </div>
@@ -30,10 +30,10 @@
                     <td>Mark</td>
                     <td>Otto</td>
                     <td>
-                        <button type="button" class="btn btn-outline-success">
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit')">
                             <span class="material-symbols-outlined mt-1">edit</span>
                         </button>                
-                        <button type="button" class="btn btn-outline-danger">
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalDelete" id="deleteBtn"">
                             <span class="material-symbols-outlined mt-1">delete</span>
                         </button>                 
                     </td>
@@ -72,12 +72,12 @@
     </div>    
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add User</h1>
+                <h1 class="modal-title fs-5" id="modalLabel">Add User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -107,15 +107,49 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary">Add User</button>
+                <button type="button" class="btn btn-outline-primary" id="btnLabel" data-bs-dismiss="modal">Add User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <p>Are you sure you wanrt to delete this user?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">              
+                <button type="button" class="btn btn-outline-primary mr-2" data-bs-dismiss="modal">No, they can stay.</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Yes, Delete them.</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $('#modal').on('shown.bs.modal', function () {
-        $('#myInput').trigger('focus')
+    $('#modal').on('shown.bs.modal', function (e) {
+        $('#myInput').trigger('focus');
     })
+
+    $('#modalDelete').on('shown.bs.modal', function (e) {
+        console.log("here");
+        $('#myInput').trigger('focus');
+    })
+
+    function setModal(trigger){
+        if (trigger === "add") {
+            $("#modalLabel").html("Add User");
+            $("#btnLabel").html("Add User");
+        } else if (trigger === "edit") {
+            $("#modalLabel").html("Edit User");
+            $("#btnLabel").html("Confirm");
+        }
+    }
 </script>
 
