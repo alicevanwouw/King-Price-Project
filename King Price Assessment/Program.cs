@@ -1,4 +1,7 @@
 using King_Price_Assessment.Controllers;
+using King_Price_Assessment.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,12 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
-//builder.Services.AddScoped<UserController>();
-//builder.Services.AddScoped<GroupController>();
+builder.Services.AddDbContext<UserManagementContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddDbContext<UserManagementContext>(options =>
-//               options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresEntity")));
-
+builder.Services.AddScoped<UserController>();
+builder.Services.AddScoped<GroupController>();
 
 var app = builder.Build();
 
@@ -28,7 +30,8 @@ app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 
 app.UseRouting();

@@ -1,4 +1,5 @@
 ﻿@page
+@using King_Price_Assessment.Models;
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -21,63 +22,47 @@
                     <th scope="col">First Name</th>
                     <th scope="col">Surname</th>
                     <th scope="col">Groups</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone Number</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>
-                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit')">
-                            <span class="material-symbols-outlined mt-1">edit</span>
-                        </button>                
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalDelete" id="deleteBtn"">
-                            <span class="material-symbols-outlined mt-1">delete</span>
-                        </button>                 
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>
-                        <span class="material-symbols-outlined">edit</span>
-                        <span class="material-symbols-outlined">delete</span>
-                    </td>
-
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>
-                        <span class="material-symbols-outlined">edit</span>
-                        <span class="material-symbols-outlined">delete</span>
-                    </td>
-
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>
-                        <span class="material-symbols-outlined">edit</span>
-                        <span class="material-symbols-outlined">delete</span>
-                    </td>
-                </tr>
+                @foreach (User user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.FirstName</td>
+                        <td>@user.Surname</td>
+                        <td>@user.Groups</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
+                                <span class="material-symbols-outlined mt-1">edit</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal-felete" id="delete-@user.Id">
+                                <span class="material-symbols-outlined mt-1">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>    
+    <div class="row">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <p>Total:</p>
+            <p>@Model.UserCount</p>
+        </div>
+    </div>
 </div>
 
 <!-- Add/Edit Modal -->
-<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalLabel">Add User</h1>
+                <h1 class="modal-title fs-5" id="modal-label">Add User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -86,19 +71,26 @@
                         <div class="d-flex flex-column">
                             <div>
                                 <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <input type="text" class="form-control" id="input-first-name" placeholder="First Name">
                             </div>
                             <div>
                                 <label for="surname" class="form-label">Surname</label>
-                                <input type="text" class="form-control" id="surname" placeholder="Surname">
+                                <input type="text" class="form-control" id="input-surname" placeholder="Surname">
                             </div>
-                           
+                            <div>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="input-email" placeholder="Email">
+                            </div>
+                            <div>
+                                <label for="phone-number" class="form-label">Phone Number</label>
+                                <input type="number" class="form-control" id="input-phone-number" placeholder="Phone Number">
+                            </div>
                         </div>
                        
                     </div>
                     <div class="col">
                         <label for="groups" class="form-label">Groups</label>
-                        <select class="form-select" multiple aria-label="Multiple select example">
+                        <select class="form-select" multiple aria-label="Multiple select example" id="input-groups">
                             <option value="1">One</option>
                             <option value="2">Two</option>
                             <option value="3">Three</option>
@@ -107,18 +99,19 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" id="btnLabel" data-bs-dismiss="modal" onclick="addUser()">Add User</button>
+                <button type="button" class="btn btn-outline-primary" id="add-btn-label" data-bs-dismiss="modal" onclick="addUser(event)">Add User</button>
+                <button type="button" class="btn btn-outline-primary" id="edit-btn-label" data-bs-dismiss="modal" onclick="editUser(event)" style="display:none">Update User</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Delete Modal -->
-<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-delete" tabindex="-1" aria-labelledby="delete-modal-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete User</h1>
+                <h1 class="modal-title fs-5" id="delete-modal-label">Delete User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -132,32 +125,99 @@
     </div>
 </div>
 
+<div class="alert alert-success" role="alert" id="success-alert" style="display:none">
+    User saved successfully;
+</div>
+
+<div class="alert alert-danger" role="alert" id="failure-alert" style="display:none">
+    An Error Occurred. 
+</div>
+
 <script>
+    let rowId;
+
     $('#modal').on('shown.bs.modal', function (e) {
         $('#myInput').trigger('focus');
     })
 
-    $('#modalDelete').on('shown.bs.modal', function (e) {
-        console.log("here");
+    $('#modal-delete').on('shown.bs.modal', function (e) {
         $('#myInput').trigger('focus');
     })
 
     function setModal(trigger){
         if (trigger === "add") {
-            $("#modalLabel").html("Add User");
-            $("#btnLabel").html("Add User");
-        } else if (trigger === "edit") {
-            $("#modalLabel").html("Edit User");
-            $("#btnLabel").html("Confirm");
+            $("#modal-label").html("Add User");
+            $("#edit-btn-label").css("display", "none");
+            $("#add-btn-label").css("display", "block");
+        } else if (trigger.includes("edit")) {
+            rowId = trigger.split("#")[1];
+            $("#modal-label").html("Edit User");
+            $("#add-btn-label").css("display", "none");
+            $("#edit-btn-label").css("display", "block");
         }
     }
 
-    function addUser(){
-
+    function hideSuccessBanner(){
+        $("#success-alert").css("display", "none");
     }
 
-    function editUser() {
+    function hideFailureBanner() {
+        $("#failure-alert").css("display", "none");
+    }
 
+    function getUserDataFromForm(){
+        return userData = {
+            FirstName: $("#input-first-name").val(),
+            Surname: $("#input-surname").val(),
+            PhoneNumber: $("#input-phone-number").val(),
+            Email: $("#input-email").val(),
+            Groups: $("#input-groups").val(),
+        };
+    }
+
+    function addUser(e){
+        let userData = getUserDataFromForm();
+
+        $.ajax({
+            url: "/User/Post",
+            type: 'POST',
+            data: {
+                values: JSON.stringify(getUserDataFromForm()),
+            },
+            success: function (res) {
+                $("#success-alert").css("display", "block");
+                $("#success-alert").html = "User addded successfully";
+                setTimeout(hideSuccessBanner, 3000);
+            },
+            error: function (err) {
+                $("#failure-alert").css("display", "block");
+                setTimeout(hideFailureBanner, 3000);
+                console.error(JSON.stringify(err));
+            }
+        })
+    }
+
+    function editUser(e) {
+        let userData = getUserDataFromForm();
+
+        $.ajax({
+            url: "/User/Put",
+            type: 'PUT',
+            data: {
+                id: rowId,
+                values: JSON.stringify(getUserDataFromForm()),
+            },
+            success: function (res) {
+                $("#success-alert").css("display", "block");
+                $("#success-alert").html = "User updated successfully";
+                setTimeout(hideSuccessBanner, 3000);
+            },
+            error: function (err) {
+                $("#failure-alert").css("display", "block");
+                setTimeout(hideFailureBanner, 3000);
+                console.error(JSON.stringify(err));
+            }
+        })
     }
 
     function deleteUser() {

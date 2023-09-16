@@ -18,7 +18,7 @@ namespace King_Price_Assessment.Controllers
         {
             return Json(_context.Groups
                 .Select(x => x.Name)
-                .Distinct());
+                .Distinct().ToList());
         }
     }
 }
