@@ -40,7 +40,7 @@
                             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
                                 <span class="material-symbols-outlined mt-1">edit</span>
                             </button>
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal-felete" id="delete-@user.Id">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('@user.Id')" id="delete-@user.Id">
                                 <span class="material-symbols-outlined mt-1">delete</span>
                             </button>
                         </td>
@@ -158,6 +158,10 @@
         }
     }
 
+    function setDeleteId(id) {
+        rowId = id;
+    }
+
     function showSuccessBanner(text){
         $("#success-alert").css("display", "block");
         $("#success-alert").html(text);
@@ -188,8 +192,6 @@
     }
 
     function addUser(e){
-        let userData = getUserDataFromForm();
-
         $.ajax({
             url: "/User/Post",
             type: 'POST',
@@ -207,8 +209,6 @@
     }
 
     function editUser(e) {
-        let userData = getUserDataFromForm();
-
         $.ajax({
             url: "/User/Put",
             type: 'PUT',
@@ -227,7 +227,20 @@
     }
 
     function deleteUser() {
-
+        $.ajax({
+            url: "/User/Delete",
+            type: 'DELETE',
+            data: {
+                id: rowId,
+            },
+            success: function (res) {
+                showSuccessBanner("user deleted successfully");
+            },
+            error: function (err) {
+                showFailureBanner();
+                console.error(JSON.stringify(err));
+            }
+        })
     }
 </script>
 
