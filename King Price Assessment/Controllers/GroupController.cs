@@ -1,5 +1,6 @@
 ﻿using King_Price_Assessment.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace King_Price_Assessment.Controllers
 {
@@ -16,9 +17,10 @@ namespace King_Price_Assessment.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(_context.Groups
-                .Select(x => x.Name)
-                .Distinct().ToList());
+            List<Group> groups = _context.Groups
+                                      .GroupBy(x => x.Name)
+                                      .Select(x=> x.FirstOrDefault()).ToList();
+            return Json(groups);
         }
     }
 }

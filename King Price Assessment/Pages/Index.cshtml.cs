@@ -12,7 +12,7 @@ public class IndexModel : PageModel
     private GroupController _groupController;
 
     public List<User> Users = new List<User>();
-    public List<UserGroup> Groups = new List<UserGroup>();
+    public List<Group> Groups = new List<Group>();
     public int UserCount = 0;
 
     public IndexModel(ILogger<IndexModel> logger, UserController userController, GroupController groupController)
@@ -33,7 +33,7 @@ public class IndexModel : PageModel
             Users = (List<Models.User>)((JsonResult)actionResult).Value;
             UserCount = (int)((JsonResult)actionResultUserCount).Value;
 
-            //Groups = (List<UserGroup>)((JsonResult)actionResultGroup).Value;
+            Groups = (List<Group>)((JsonResult)actionResultGroup).Value;
 
             return Page();
         }

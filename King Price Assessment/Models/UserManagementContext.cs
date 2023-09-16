@@ -10,7 +10,7 @@ namespace King_Price_Assessment.Models
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<UserGroup> Groups { get; set; }
+        public DbSet<Group> Groups { get; set; }
         public DbSet<GroupPermission> Permissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,7 +58,7 @@ namespace King_Price_Assessment.Models
 
             //modelBuilder.Entity<UserGroup>().ToTable("group");
 
-            modelBuilder.Entity<UserGroup>(entity =>
+            modelBuilder.Entity<Group>(entity =>
             {
                 entity.HasKey(e => e.Id)
                     .HasName("group_pkey");
@@ -73,8 +73,8 @@ namespace King_Price_Assessment.Models
                    .HasColumnType("character varying")
                    .HasColumnName("name");
 
-                //entity.Property(e => e.Permissions)
-                //     .HasColumnName("permissions");
+                entity.Property(e => e.Permissions)
+                     .HasColumnName("permissions");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("timestamp with time zone")

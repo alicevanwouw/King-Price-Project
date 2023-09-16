@@ -24,7 +24,7 @@ namespace King_Price_Assessment.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(_context.Users.Select(x => x).ToList());
+            return Json(_context.Users.ToList());
         }
 
         //Retrieve user count
