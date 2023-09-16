@@ -158,6 +158,17 @@
         }
     }
 
+    function showSuccessBanner(text){
+        $("#success-alert").css("display", "block");
+        $("#success-alert").html(text);
+        setTimeout(hideSuccessBanner, 3000);
+    }
+
+    function showFailureBanner() {
+        $("#failure-alert").css("display", "block");
+        setTimeout(hideFailureBanner, 3000);       
+    }
+
     function hideSuccessBanner(){
         $("#success-alert").css("display", "none");
     }
@@ -186,13 +197,10 @@
                 values: JSON.stringify(getUserDataFromForm()),
             },
             success: function (res) {
-                $("#success-alert").css("display", "block");
-                $("#success-alert").html = "User addded successfully";
-                setTimeout(hideSuccessBanner, 3000);
+                showSuccessBanner("user added successfully");
             },
             error: function (err) {
-                $("#failure-alert").css("display", "block");
-                setTimeout(hideFailureBanner, 3000);
+                showFailureBanner(); 
                 console.error(JSON.stringify(err));
             }
         })
@@ -209,13 +217,10 @@
                 values: JSON.stringify(getUserDataFromForm()),
             },
             success: function (res) {
-                $("#success-alert").css("display", "block");
-                $("#success-alert").html = "User updated successfully";
-                setTimeout(hideSuccessBanner, 3000);
+                showSuccessBanner("user updated successfully");
             },
             error: function (err) {
-                $("#failure-alert").css("display", "block");
-                setTimeout(hideFailureBanner, 3000);
+                showFailureBanner();
                 console.error(JSON.stringify(err));
             }
         })
