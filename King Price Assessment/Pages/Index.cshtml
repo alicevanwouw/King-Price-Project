@@ -31,11 +31,11 @@
                 @foreach (User user in Model.Users)
                 {
                     <tr>
-                        <td>@user.FirstName</td>
-                        <td>@user.Surname</td>
-                        <td>@user.Groups</td>
-                        <td>@user.Email</td>
-                        <td>@user.PhoneNumber</td>
+                        <td id="first-name-@user.Id">@user.FirstName</td>
+                        <td id="surname-@user.Id">@user.Surname</td>
+                        <td id="groups-@user.Id">@user.Groups</td>
+                        <td id="email-@user.Id">@user.Email</td>
+                        <td id="phone-number-@user.Id">@user.PhoneNumber</td>
                         <td>
                             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
                                 <span class="material-symbols-outlined mt-1">edit</span>
@@ -147,12 +147,23 @@
 
     function setModal(trigger){
         if (trigger === "add") {
+            //clearform fields
+            $("#modal-label").html("Edit User");
+            $("#input-first-name").val("");
+            $("#input-surname").val("");
+            $("#input-phone-number").val("");
+            $("#input-email").val("");
             $("#modal-label").html("Add User");
             $("#edit-btn-label").css("display", "none");
             $("#add-btn-label").css("display", "block");
         } else if (trigger.includes("edit")) {
             rowId = trigger.split("#")[1];
             $("#modal-label").html("Edit User");
+            //populate form fields with values from tabel row
+            $("#input-first-name").val($(`#first-name-${rowId}`).text());
+            $("#input-surname").val($(`#surname-${rowId}`).text());
+            $("#input-phone-number").val($(`#phone-number-${rowId}`).text());
+            $("#input-email").val($(`#email-${rowId}`).text()) ;
             $("#add-btn-label").css("display", "none");
             $("#edit-btn-label").css("display", "block");
         }
