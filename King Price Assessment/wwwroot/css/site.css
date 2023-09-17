@@ -33,6 +33,42 @@ body {
     padding-left: 0px;
 }
 
-.table-content{
-    height: 70vh;
+.table-content {
+    height: 60vh;
+    overflow-y: auto;
 }
+
+.group-table-content{
+    height: 30vh;
+    overflow-y: auto;
+}
+
+.table > thead {
+    vertical-align: bottom;
+    position: sticky;
+    top: 0;
+    background: #e9ecef;
+    color: #000;
+}
+
+.table > tbody {
+    vertical-align: middle;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #1d1e24;
+}
+
+.table-button {
+    padding: 0px 5px 0px 5px;
+}
+

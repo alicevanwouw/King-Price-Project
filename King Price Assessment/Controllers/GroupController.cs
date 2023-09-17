@@ -17,10 +17,14 @@ namespace King_Price_Assessment.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            List<Group> groups = _context.Groups
-                                      .GroupBy(x => x.Name)
-                                      .Select(x=> x.FirstOrDefault()).ToList();
-            return Json(groups);
+            return Json(GetGroups());
+        }
+
+        public List<Group> GetGroups()
+        {
+            return _context.Groups
+                        .GroupBy(x => x.Name)
+                        .Select(x => x.FirstOrDefault()).ToList();
         }
     }
 }

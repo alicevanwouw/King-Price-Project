@@ -13,6 +13,7 @@ public class IndexModel : PageModel
 
     public List<User> Users = new List<User>();
     public List<Group> Groups = new List<Group>();
+    public Dictionary<string, int> UsersInGroups = new Dictionary<string, int>();
     public int UserCount = 0;
 
     public IndexModel(ILogger<IndexModel> logger, UserController userController, GroupController groupController)
@@ -27,13 +28,14 @@ public class IndexModel : PageModel
         var actionResult = _userController.Get();
         var actionResultGroup = _groupController.Get();
         var actionResultUserCount = _userController.GetUserCount();
+        var actionResultUserGroupCount = _userController.GetUserCountForGroups();
 
         if (actionResult is JsonResult && actionResultGroup is JsonResult)
         {
             Users = (List<Models.User>)((JsonResult)actionResult).Value;
             UserCount = (int)((JsonResult)actionResultUserCount).Value;
-
             Groups = (List<Group>)((JsonResult)actionResultGroup).Value;
+            UsersInGroups = (Dictionary<string, int>)((JsonResult)actionResultUserGroupCount).Value;
 
             return Page();
         }

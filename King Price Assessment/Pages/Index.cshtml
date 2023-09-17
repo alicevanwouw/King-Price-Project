@@ -6,6 +6,7 @@
 }
 
 <div class="container-fluid">
+    <!-- User Table -->
     <div class="row table-toolbar">
         <div class="d-flex justify-content-between mt-3 g-0">
             <h3>Users</h3>
@@ -15,7 +16,7 @@
         </div>
        
     </div>
-    <div class="row table-content">
+    <div class="row table-content mt-1">
         <table class="table">
             <thead>
                 <tr>
@@ -27,20 +28,20 @@
                     <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="user-table-body">
                 @foreach (User user in Model.Users)
                 {
-                    <tr>
+                    <tr id="row-@user.Id">
                         <td id="first-name-@user.Id">@user.FirstName</td>
                         <td id="surname-@user.Id">@user.Surname</td>
                         <td id="groups-@user.Id">@user.Groups</td>
                         <td id="email-@user.Id">@user.Email</td>
                         <td id="phone-number-@user.Id">@user.PhoneNumber</td>
                         <td>
-                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
+                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
                                 <span class="material-symbols-outlined mt-1">edit</span>
                             </button>
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('@user.Id')" id="delete-@user.Id">
+                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('@user.Id')" id="delete-@user.Id">
                                 <span class="material-symbols-outlined mt-1">delete</span>
                             </button>
                         </td>
@@ -55,6 +56,33 @@
             <p>@Model.UserCount</p>
         </div>
     </div>
+
+    <!-- Groups Table -->
+    <div class="row table-toolbar">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <h3>Groups</h3>           
+        </div>
+    </div>
+    <div class="row group-table-content mt-1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">User Count</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var key in Model.UsersInGroups.Keys)
+            {
+                <tr>
+                    <td>@key</td>
+                    <td>@Model.UsersInGroups[key]</td>
+                </tr>              
+            }
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 <!-- Add/Edit Modal -->
@@ -120,7 +148,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">              
                 <button type="button" class="btn btn-outline-primary mr-2" data-bs-dismiss="modal">No, they can stay.</button>
-                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Yes, Delete them.</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" onClick="deleteUser()">Yes, Delete them.</button>
             </div>
         </div>
     </div>
@@ -147,23 +175,28 @@
 
     function setModal(trigger){
         if (trigger === "add") {
+            //change modal text for add
+            $("#modal-label").html("Add User");
             //clearform fields
             $("#modal-label").html("Edit User");
             $("#input-first-name").val("");
             $("#input-surname").val("");
             $("#input-phone-number").val("");
             $("#input-email").val("");
-            $("#modal-label").html("Add User");
+            //change modakl buttons for add
             $("#edit-btn-label").css("display", "none");
             $("#add-btn-label").css("display", "block");
         } else if (trigger.includes("edit")) {
+            //get the id of the user being edited 
             rowId = trigger.split("#")[1];
+            //change the modal text for edit
             $("#modal-label").html("Edit User");
             //populate form fields with values from tabel row
             $("#input-first-name").val($(`#first-name-${rowId}`).text());
             $("#input-surname").val($(`#surname-${rowId}`).text());
             $("#input-phone-number").val($(`#phone-number-${rowId}`).text());
             $("#input-email").val($(`#email-${rowId}`).text()) ;
+            //change modal buttons for edit
             $("#add-btn-label").css("display", "none");
             $("#edit-btn-label").css("display", "block");
         }
@@ -193,6 +226,7 @@
     }
 
     function getUserDataFromForm(){
+        //get information on user from from
         return userData = {
             FirstName: $("#input-first-name").val(),
             Surname: $("#input-surname").val(),
@@ -211,6 +245,23 @@
             },
             success: function (res) {
                 showSuccessBanner("user added successfully");
+                //Add the new user to the table
+                let newRow = ` <tr>
+                        <td id="first-name-${res.id}">${res.firstName}</td>
+                        <td id="surname-${res.id}">${res.surname}</td>
+                        <td id="groups-${res.id}">${res.groups}</td>
+                        <td id="email-${res.id}">${res.email}</td>
+                        <td id="phone-number-${res.id}">${res.phoneNumber}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#${res.id}')" id="edit-${res.id}">
+                                <span class="material-symbols-outlined mt-1">edit</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('${res.id}')" id="delete-${res.id}">
+                                <span class="material-symbols-outlined mt-1">delete</span>
+                            </button>
+                        </td>
+                    </tr>`
+                $("#user-table-body").append(newRow);
             },
             error: function (err) {
                 showFailureBanner(); 
@@ -229,6 +280,12 @@
             },
             success: function (res) {
                 showSuccessBanner("user updated successfully");
+                //edit the row date to reflect the changes
+                $(`#first-name-${rowId}`).text($("#input-first-name").val());
+                $(`#surname-${rowId}`).text($("#input-surname").val());
+                $(`#email-${rowId}`).text($("#input-email").val());
+                $(`#phone-number-${rowId}`).text($("#input-phone-number").val());
+                $(`#groups-${rowID}`).text($("#input-groups").val());
             },
             error: function (err) {
                 showFailureBanner();
@@ -246,6 +303,8 @@
             },
             success: function (res) {
                 showSuccessBanner("user deleted successfully");
+                //remove the user from the table
+                $(`#row-${rowId}`).empty();
             },
             error: function (err) {
                 showFailureBanner();

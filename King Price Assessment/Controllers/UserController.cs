@@ -14,10 +14,12 @@ namespace King_Price_Assessment.Controllers
     public class UserController : Controller
     {
         private UserManagementContext _context;
+        private GroupController _groupController;
 
-        public UserController(UserManagementContext context)
+        public UserController(UserManagementContext context, GroupController groupController)
         {
             _context = context;
+            _groupController = groupController;
         }
 
         //Retrieve all users
@@ -36,11 +38,20 @@ namespace King_Price_Assessment.Controllers
 
         //Retrieve number of users in each group
         [HttpGet]
-        public async Task<IActionResult> GetUserCountForGroups()
+        public ActionResult GetUserCountForGroups()
         {
-            var users = _context.Users.Select(x => x).ToList();
+            var groups = _groupController.GetGroups();
+            var usersInGroups = new Dictionary<string, int> ();
 
-            return Json(users);
+            foreach (var group in groups)
+            {
+                //var usersCount = _context.Users
+                //    .Where(x => x.Groups.ToList().Contains(Convert.ToString(group.Id)))
+                //    .Count();
+                usersInGroups.Add(group.Name, 0);
+            }
+
+            return Json(usersInGroups);
         }
 
         //Update a users details
