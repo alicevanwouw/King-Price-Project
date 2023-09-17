@@ -1,4 +1,5 @@
-﻿using King_Price_Assessment.Models;
+﻿using King_Price_Assessment.Data;
+using King_Price_Assessment.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,7 +20,7 @@ namespace King_Price_Assessment.Controllers
         public UserController(UserManagementContext context, GroupController groupController)
         {
             _context = context;
-            _groupController = groupController;
+            _groupController = groupController;          
         }
 
         //Retrieve all users

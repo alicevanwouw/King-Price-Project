@@ -1,4 +1,5 @@
-﻿using King_Price_Assessment.Models;
+﻿using King_Price_Assessment.Data;
+using King_Price_Assessment.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 

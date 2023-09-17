@@ -2,7 +2,7 @@
 
 namespace King_Price_Assessment.Models
 {
-    public class GroupPermission:AbstractModel
+    public class Permission:AbstractModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
