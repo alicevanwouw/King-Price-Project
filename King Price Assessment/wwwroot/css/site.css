@@ -33,6 +33,12 @@ body {
     padding-left: 0px;
 }
 
+.table-footer {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin-top: 1rem;
+}
+
 .table-content {
     height: 60vh;
     overflow-y: auto;
@@ -70,5 +76,18 @@ body {
 
 .table-button {
     padding: 0px 5px 0px 5px;
+}
+
+tr{
+    line-height: 20px;
+}
+
+.group-table td {
+    height: 14px
+}
+
+.alert {
+    position: sticky;
+    bottom: 35px;
 }
 

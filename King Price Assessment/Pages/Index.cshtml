@@ -50,10 +50,10 @@
             </tbody>
         </table>
     </div>    
-    <div class="row">
+    <div class="row table-footer">
         <div class="d-flex justify-content-between mt-3 g-0">
-            <p>Total:</p>
-            <p>@Model.UserCount</p>
+            <p class="ms-2">Total:</p>
+            <p class="me-5">@Model.UserCount</p>
         </div>
     </div>
 
@@ -64,7 +64,7 @@
         </div>
     </div>
     <div class="row group-table-content mt-1">
-        <table class="table">
+        <table class="table group-table">
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -154,10 +154,12 @@
     </div>
 </div>
 
+<!-- Success Banner -->
 <div class="alert alert-success" role="alert" id="success-alert" style="display:none">
     User saved successfully;
 </div>
 
+<!-- Failure Banner -->
 <div class="alert alert-danger" role="alert" id="failure-alert" style="display:none">
     An Error Occurred. 
 </div>
@@ -285,7 +287,7 @@
                 $(`#surname-${rowId}`).text($("#input-surname").val());
                 $(`#email-${rowId}`).text($("#input-email").val());
                 $(`#phone-number-${rowId}`).text($("#input-phone-number").val());
-                $(`#groups-${rowID}`).text($("#input-groups").val());
+                $(`#groups-${rowId}`).text($("#input-groups").val());
             },
             error: function (err) {
                 showFailureBanner();
