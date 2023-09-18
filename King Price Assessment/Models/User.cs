@@ -4,13 +4,11 @@ using System.Text.RegularExpressions;
 
 namespace King_Price_Assessment.Models
 {
-    [Table("User", Schema = "UserManagement")]
     public class User:AbstractModel
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
-        //public string[]? Groups { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
         public string? Email { get;set; }
         public string? PhoneNumber { get;set; }

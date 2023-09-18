@@ -19,25 +19,25 @@ builder.Services.AddDbContext<UserManagementContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
-var host = Host.CreateDefaultBuilder(args).Build();
+//var host = Host.CreateDefaultBuilder(args).Build();
 
-using (var scope = host.Services.CreateScope())
-{
-    Console.WriteLine("here");
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<UserManagementContext>();
+//using (var scope = host.Services.CreateScope())
+//{
+//    Console.WriteLine("here");
+//    var services = scope.ServiceProvider;
+//    try
+//    {
+//        var context = services.GetRequiredService<UserManagementContext>();
+//        DatabaseInitializer.Initialize(context);
+//    }
+//    catch (Exception ex)
+//    {
+//        var logger = services.GetRequiredService<ILogger<Program>>();
+//        logger.LogError(ex, "An error occurred while seeding the database.");
+//    }
+//}
 
-        DatabaseInitializer.Initialize(context);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
-}
-
+builder.Services.AddScoped<DatabaseInitializer>();
 builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<GroupController>();
 

@@ -34,7 +34,11 @@
                     <tr id="row-@user.Id">
                         <td id="first-name-@user.Id">@user.FirstName</td>
                         <td id="surname-@user.Id">@user.Surname</td>
-                        <td id="groups-@user.Id">@user.Groups</td>
+                        <td id="groups-@user.Id">@foreach(Group group in @user.Groups)
+                            {
+                                @group.Name
+                            }
+                        </td>
                         <td id="email-@user.Id">@user.Email</td>
                         <td id="phone-number-@user.Id">@user.PhoneNumber</td>
                         <td>

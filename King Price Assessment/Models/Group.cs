@@ -6,9 +6,8 @@ namespace King_Price_Assessment.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        //public string[]? Permissions { get; set; }
-        public virtual ICollection<Group> Permissions { get; set; }
-        public virtual ICollection<Group> Users { get; set; }
+        public virtual ICollection<Permission> Permissions { get; set; }
+        public virtual ICollection<User> Users { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
 

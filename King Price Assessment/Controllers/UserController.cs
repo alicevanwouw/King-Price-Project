@@ -16,18 +16,22 @@ namespace King_Price_Assessment.Controllers
     {
         private UserManagementContext _context;
         private GroupController _groupController;
+        private DatabaseInitializer _databaseInitializer;
 
-        public UserController(UserManagementContext context, GroupController groupController)
+        public UserController(UserManagementContext context, GroupController groupController, DatabaseInitializer databaseInitializer)
         {
             _context = context;
-            _groupController = groupController;          
+            _groupController = groupController;  
+            _databaseInitializer = databaseInitializer;
+
+            databaseInitializer.Initialize();
         }
 
         //Retrieve all users
         [HttpGet]
         public IActionResult Get()
         {
-            return Json(_context.Users.ToList());
+            return Json(_context.Users.Include(x => x.Groups).ToList());
         }
 
         //Retrieve user count
@@ -47,7 +51,7 @@ namespace King_Price_Assessment.Controllers
             foreach (var group in groups)
             {
                 //var usersCount = _context.Users
-                //    .Where(x => x.Groups.ToList().Contains(Convert.ToString(group.Id)))
+                //    .Where(x => x.Groups.ToList().Select(x=>x.Id).ToList().Contains(group.Id))
                 //    .Count();
                 usersInGroups.Add(group.Name, 0);
             }
