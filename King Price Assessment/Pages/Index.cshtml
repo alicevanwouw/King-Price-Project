@@ -1,0 +1,345 @@
+﻿@page
+@using King_Price_Assessment.Models;
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container-fluid">
+    <!-- User Table -->
+    <div class="row table-toolbar">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <h3>Users</h3>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('add')">
+                <span class="material-symbols-outlined mt-1" >Add</span>
+            </button>           
+        </div>
+       
+    </div>
+    <div class="row table-content mt-1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Groups</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body">
+                @foreach (User user in Model.Users)
+                {
+                    <tr id="row-@user.Id">
+                        <td id="first-name-@user.Id">@user.FirstName</td>
+                        <td id="surname-@user.Id">@user.Surname</td>
+                        <td id="groups-@user.Id">@foreach(Group group in @user.Groups)
+                            {
+                                @($"{group.Name}, ")
+                            }
+                        </td>
+                        <td id="email-@user.Id">@user.Email</td>
+                        <td id="phone-number-@user.Id">@user.PhoneNumber</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#@user.Id')" id="edit-@user.Id">
+                                <span class="material-symbols-outlined mt-1">edit</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('@user.Id')" id="delete-@user.Id">
+                                <span class="material-symbols-outlined mt-1">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>    
+    <div class="row table-footer">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <p class="ms-2">Total:</p>
+            <p class="me-5">@Model.UserCount</p>
+        </div>
+    </div>
+
+    <!-- Groups Table -->
+    <div class="row table-toolbar">
+        <div class="d-flex justify-content-between mt-3 g-0">
+            <h3>Groups</h3>           
+        </div>
+    </div>
+    <div class="row group-table-content mt-1">
+        <table class="table group-table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">User Count</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var key in Model.UsersInGroups.Keys)
+            {
+                <tr>
+                    <td>@key</td>
+                    <td>@Model.UsersInGroups[key]</td>
+                </tr>              
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal-label">Add User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex flex-column">
+                            <div>
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="input-first-name" placeholder="First Name">
+                            </div>
+                            <div>
+                                <label for="surname" class="form-label">Surname</label>
+                                <input type="text" class="form-control" id="input-surname" placeholder="Surname">
+                            </div>
+                            <div>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="input-email" placeholder="Email">
+                            </div>
+                            <div>
+                                <label for="phone-number" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="input-phone-number" placeholder="Phone Number">
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="col">
+                        <label for="groups" class="form-label">Groups</label>
+                        <select class="form-select" multiple aria-label="Multiple select example" id="input-groups">
+                             @foreach (Group group in Model.Groups)
+                            {
+                                <option value="@group.Id" id="group-select-@group.Id" class="group-select" name="@group.Name">
+                                    @group.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" id="add-btn-label" data-bs-dismiss="modal" onclick="addUser(event)">Add User</button>
+                <button type="button" class="btn btn-outline-primary" id="edit-btn-label" data-bs-dismiss="modal" onclick="editUser(event)" style="display:none">Update User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="modal-delete" tabindex="-1" aria-labelledby="delete-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="delete-modal-label">Delete User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <p>Are you sure you want to delete this user?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">              
+                <button type="button" class="btn btn-outline-primary mr-2" data-bs-dismiss="modal">No, they can stay.</button>
+                <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" onClick="deleteUser()">Yes, Delete them.</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Banner -->
+<div class="alert alert-success" role="alert" id="success-alert" style="display:none">
+    User saved successfully;
+</div>
+
+<!-- Failure Banner -->
+<div class="alert alert-danger" role="alert" id="failure-alert" style="display:none">
+    An Error Occurred. 
+</div>
+
+<script>
+    let rowId;
+
+    $('#modal').on('shown.bs.modal', function (e) {
+        $('#myInput').trigger('focus');
+    })
+
+    $('#modal-delete').on('shown.bs.modal', function (e) {
+        $('#myInput').trigger('focus');
+    })
+
+    function setModal(trigger){
+        //clearform fields
+        $("#modal-label").html("Edit User");
+        $("#input-first-name").val("");
+        $("#input-surname").val("");
+        $("#input-phone-number").val("");
+        $("#input-email").val("");
+        let selectOptions = $(".group-select");
+        selectOptions.each(function (i, obj) {
+            obj.selected = false;
+        });
+
+        if (trigger === "add") {
+            //change modal text for add
+            $("#modal-label").html("Add User");           
+            //change modakl buttons for add
+            $("#edit-btn-label").css("display", "none");
+            $("#add-btn-label").css("display", "block");
+        } else if (trigger.includes("edit")) {
+            //get the id of the user being edited 
+            rowId = trigger.split("#")[1];
+            //change the modal text for edit
+            $("#modal-label").html("Edit User");
+            //populate form fields with values from tabel row
+            $("#input-first-name").val($(`#first-name-${rowId}`).text());
+            $("#input-surname").val($(`#surname-${rowId}`).text());
+            $("#input-phone-number").val($(`#phone-number-${rowId}`).text());
+            $("#input-email").val($(`#email-${rowId}`).text()) ;
+            let groups = $(`#groups-${rowId}`).text();            
+            let matchingGroups = Array.prototype.filter.call(selectOptions, (option) => groups.includes(option.text));
+            matchingGroups.forEach(x => x.selected = true);
+            //change modal buttons for edit
+            $("#add-btn-label").css("display", "none");
+            $("#edit-btn-label").css("display", "block");
+        }
+    }
+
+    function setDeleteId(id) {
+        rowId = id;
+    }
+
+    function showSuccessBanner(text){
+        $("#success-alert").css("display", "block");
+        $("#success-alert").html(text);
+        setTimeout(hideSuccessBanner, 3000);
+    }
+
+    function showFailureBanner() {
+        $("#failure-alert").css("display", "block");
+        setTimeout(hideFailureBanner, 3000);       
+    }
+
+    function hideSuccessBanner(){
+        $("#success-alert").css("display", "none");
+    }
+
+    function hideFailureBanner() {
+        $("#failure-alert").css("display", "none");
+    }
+
+    function getUserDataFromForm(){
+        //get information on user from from
+        return userData = {
+            FirstName: $("#input-first-name").val(),
+            Surname: $("#input-surname").val(),
+            PhoneNumber: $("#input-phone-number").val(),
+            Email: $("#input-email").val(),
+            Groups: $("#input-groups").val().join(","),
+        };
+    }
+
+    function getSelectedGroupNames(){
+        let selectOptions = $(".group-select");
+        let selected = Array.prototype.filter.call(selectOptions, (option) => option.selected);
+        return selected.map(s => s.innerText).join(", ");
+    }
+
+    function addUser(e){
+        let userData = getUserDataFromForm();
+
+        $.ajax({
+            url: "/User/Post",
+            type: 'POST',
+            data: {
+                values: JSON.stringify(userData),
+            },
+            success: function (res) {
+                showSuccessBanner("user added successfully");
+                let groupNames = getSelectedGroupNames();
+                //Add the new user to the table
+                let newRow = ` <tr>
+                        <td id="first-name-${res}">${userData.FirstName}</td>
+                        <td id="surname-${res}">${userData.Surname}</td>
+                        <td id="groups-${res}">${groupNames}</td>
+                        <td id="email-${res}">${userData.Email}</td>
+                        <td id="phone-number-${res}">${userData.PhoneNumber}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#${res}')" id="edit-${res}">
+                                <span class="material-symbols-outlined mt-1">edit</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('${res}')" id="delete-${res}">
+                                <span class="material-symbols-outlined mt-1">delete</span>
+                            </button>
+                        </td>
+                    </tr>`
+                $("#user-table-body").append(newRow);
+            },
+            error: function (err) {
+                showFailureBanner(); 
+                console.error(JSON.stringify(err));
+            }
+        })
+    }
+
+    function editUser(e) {
+        let userData = getUserDataFromForm();
+
+        $.ajax({
+            url: "/User/Put",
+            type: 'PUT',
+            data: {
+                id: rowId,
+                values: JSON.stringify(userData),
+            },
+            success: function (res) {
+               let groupNames = getSelectedGroupNames();
+
+                showSuccessBanner("user updated successfully");
+                //edit the row date to reflect the changes
+                $(`#first-name-${rowId}`).text(userData.FirstName);
+                $(`#surname-${rowId}`).text(userData.Surname);
+                $(`#email-${rowId}`).text(userData.Email);
+                $(`#phone-number-${rowId}`).text(userData.PhoneNumber);
+                $(`#groups-${rowId}`).text(groupNames);
+            },
+            error: function (err) {
+                showFailureBanner();
+                console.error(JSON.stringify(err));
+            }
+        })
+    }
+
+    function deleteUser() {
+        $.ajax({
+            url: "/User/Delete",
+            type: 'DELETE',
+            data: {
+                id: rowId,
+            },
+            success: function (res) {
+                showSuccessBanner("user deleted successfully");
+                //remove the user from the table
+                $(`#row-${rowId}`).empty();
+            },
+            error: function (err) {
+                showFailureBanner();
+                console.error(JSON.stringify(err));
+            }
+        })
+    }
+</script>
+
