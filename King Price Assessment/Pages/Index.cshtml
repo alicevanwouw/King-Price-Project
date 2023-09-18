@@ -36,7 +36,7 @@
                         <td id="surname-@user.Id">@user.Surname</td>
                         <td id="groups-@user.Id">@foreach(Group group in @user.Groups)
                             {
-                                @group.Name
+                                @($"{group.Name}, ")
                             }
                         </td>
                         <td id="email-@user.Id">@user.Email</td>
@@ -125,7 +125,9 @@
                         <select class="form-select" multiple aria-label="Multiple select example" id="input-groups">
                              @foreach (Group group in Model.Groups)
                             {
-                                <option value="1">@group.Name</option>
+                                <option value="@group.Id" id="group-select-@group.Id" class="group-select" name="@group.Name">
+                                    @group.Name
+                                </option>
                             }
                         </select>
                     </div>
@@ -152,7 +154,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">              
                 <button type="button" class="btn btn-outline-primary mr-2" data-bs-dismiss="modal">No, they can stay.</button>
-                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" onClick="deleteUser()">Yes, Delete them.</button>
+                <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" onClick="deleteUser()">Yes, Delete them.</button>
             </div>
         </div>
     </div>
@@ -180,15 +182,20 @@
     })
 
     function setModal(trigger){
+        //clearform fields
+        $("#modal-label").html("Edit User");
+        $("#input-first-name").val("");
+        $("#input-surname").val("");
+        $("#input-phone-number").val("");
+        $("#input-email").val("");
+        let selectOptions = $(".group-select");
+        selectOptions.each(function (i, obj) {
+            obj.selected = false;
+        });
+
         if (trigger === "add") {
             //change modal text for add
-            $("#modal-label").html("Add User");
-            //clearform fields
-            $("#modal-label").html("Edit User");
-            $("#input-first-name").val("");
-            $("#input-surname").val("");
-            $("#input-phone-number").val("");
-            $("#input-email").val("");
+            $("#modal-label").html("Add User");           
             //change modakl buttons for add
             $("#edit-btn-label").css("display", "none");
             $("#add-btn-label").css("display", "block");
@@ -202,6 +209,9 @@
             $("#input-surname").val($(`#surname-${rowId}`).text());
             $("#input-phone-number").val($(`#phone-number-${rowId}`).text());
             $("#input-email").val($(`#email-${rowId}`).text()) ;
+            let groups = $(`#groups-${rowId}`).text();            
+            let matchingGroups = Array.prototype.filter.call(selectOptions, (option) => groups.includes(option.text));
+            matchingGroups.forEach(x => x.selected = true);
             //change modal buttons for edit
             $("#add-btn-label").css("display", "none");
             $("#edit-btn-label").css("display", "block");
@@ -238,31 +248,40 @@
             Surname: $("#input-surname").val(),
             PhoneNumber: $("#input-phone-number").val(),
             Email: $("#input-email").val(),
-            Groups: $("#input-groups").val(),
+            Groups: $("#input-groups").val().join(","),
         };
     }
 
+    function getSelectedGroupNames(){
+        let selectOptions = $(".group-select");
+        let selected = Array.prototype.filter.call(selectOptions, (option) => option.selected);
+        return selected.map(s => s.innerText).join(", ");
+    }
+
     function addUser(e){
+        let userData = getUserDataFromForm();
+
         $.ajax({
             url: "/User/Post",
             type: 'POST',
             data: {
-                values: JSON.stringify(getUserDataFromForm()),
+                values: JSON.stringify(userData),
             },
             success: function (res) {
                 showSuccessBanner("user added successfully");
+                let groupNames = getSelectedGroupNames();
                 //Add the new user to the table
                 let newRow = ` <tr>
-                        <td id="first-name-${res.id}">${res.firstName}</td>
-                        <td id="surname-${res.id}">${res.surname}</td>
-                        <td id="groups-${res.id}">${res.groups}</td>
-                        <td id="email-${res.id}">${res.email}</td>
-                        <td id="phone-number-${res.id}">${res.phoneNumber}</td>
+                        <td id="first-name-${res}">${userData.FirstName}</td>
+                        <td id="surname-${res}">${userData.Surname}</td>
+                        <td id="groups-${res}">${groupNames}</td>
+                        <td id="email-${res}">${userData.Email}</td>
+                        <td id="phone-number-${res}">${userData.PhoneNumber}</td>
                         <td>
-                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#${res.id}')" id="edit-${res.id}">
+                            <button type="button" class="btn btn-outline-success table-button" data-bs-toggle="modal" data-bs-target="#modal" onclick="setModal('edit#${res}')" id="edit-${res}">
                                 <span class="material-symbols-outlined mt-1">edit</span>
                             </button>
-                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('${res.id}')" id="delete-${res.id}">
+                            <button type="button" class="btn btn-outline-danger table-button" data-bs-toggle="modal" data-bs-target="#modal-delete" onclick="setDeleteId('${res}')" id="delete-${res}">
                                 <span class="material-symbols-outlined mt-1">delete</span>
                             </button>
                         </td>
@@ -277,21 +296,25 @@
     }
 
     function editUser(e) {
+        let userData = getUserDataFromForm();
+
         $.ajax({
             url: "/User/Put",
             type: 'PUT',
             data: {
                 id: rowId,
-                values: JSON.stringify(getUserDataFromForm()),
+                values: JSON.stringify(userData),
             },
             success: function (res) {
+               let groupNames = getSelectedGroupNames();
+
                 showSuccessBanner("user updated successfully");
                 //edit the row date to reflect the changes
-                $(`#first-name-${rowId}`).text($("#input-first-name").val());
-                $(`#surname-${rowId}`).text($("#input-surname").val());
-                $(`#email-${rowId}`).text($("#input-email").val());
-                $(`#phone-number-${rowId}`).text($("#input-phone-number").val());
-                $(`#groups-${rowId}`).text($("#input-groups").val());
+                $(`#first-name-${rowId}`).text(userData.FirstName);
+                $(`#surname-${rowId}`).text(userData.Surname);
+                $(`#email-${rowId}`).text(userData.Email);
+                $(`#phone-number-${rowId}`).text(userData.PhoneNumber);
+                $(`#groups-${rowId}`).text(groupNames);
             },
             error: function (err) {
                 showFailureBanner();

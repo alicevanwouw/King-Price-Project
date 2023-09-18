@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Globalization;
 
@@ -15,16 +16,23 @@ namespace King_Price_Assessment.Controllers
     public class UserController : Controller
     {
         private UserManagementContext _context;
-        private GroupController _groupController;
         private DatabaseInitializer _databaseInitializer;
 
         public UserController(UserManagementContext context, GroupController groupController, DatabaseInitializer databaseInitializer)
         {
             _context = context;
-            _groupController = groupController;  
+            _databaseInitializer = databaseInitializer;
             _databaseInitializer = databaseInitializer;
 
-            databaseInitializer.Initialize();
+            //very hacky... add some data to the databse if there is none
+            _context.Database.EnsureCreated();
+
+            if (!context.Users.Any())
+            {
+                _databaseInitializer.Initialize();
+            }
+
+
         }
 
         //Retrieve all users
@@ -41,58 +49,42 @@ namespace King_Price_Assessment.Controllers
             return Json(_context.Users.Count());
         }
 
-        //Retrieve number of users in each group
-        [HttpGet]
-        public ActionResult GetUserCountForGroups()
-        {
-            var groups = _groupController.GetGroups();
-            var usersInGroups = new Dictionary<string, int> ();
-
-            foreach (var group in groups)
-            {
-                //var usersCount = _context.Users
-                //    .Where(x => x.Groups.ToList().Select(x=>x.Id).ToList().Contains(group.Id))
-                //    .Count();
-                usersInGroups.Add(group.Name, 0);
-            }
-
-            return Json(usersInGroups);
-        }
-
         //Update a users details
         [HttpPut]
         public async Task<IActionResult> Put(string id, string values)
         {
-            var model = await _context.Users.FirstOrDefaultAsync(item => item.Id.Equals(Guid.Parse(id)));
-            if (model == null)
-                return StatusCode(409, "User not found");
+            var user = await _context.Users
+                .Include(u => u.Groups)
+                .FirstOrDefaultAsync(u => u.Id.Equals(Guid.Parse(id)));
 
-            var _values = JsonConvert.DeserializeObject<IDictionary>(values);
+            if (user == null)
+                     return StatusCode(409, "User not found");
 
-            PopulateUserModel(model, _values);
-
-            if (!TryValidateModel(model))
-                return BadRequest(GetFullErrorMessage(ModelState));
+            user.Groups.Clear();
+            SetUserGroups(user, values);
 
             await _context.SaveChangesAsync();
             return Ok();
+
         }
 
         //Add a new user
         [HttpPost]
         public async Task<IActionResult> Post(string values)
         {
-            var model = new User();
+            var user = new User();
+            user.Id = Guid.NewGuid();
             var valuesDict = JsonConvert.DeserializeObject<IDictionary>(values);
-            PopulateUserModel(model, valuesDict);
+            PopulateUserModel(user, valuesDict);
 
-            if (!TryValidateModel(model))
-                return BadRequest(GetFullErrorMessage(ModelState));
+            user.Groups = new List<Group>();
+            SetUserGroups(user, values);
 
-            var result = _context.Users.Add(model);
+            var result = _context.Users.Add(user);
+            var newId = result.Entity.Id;
             await _context.SaveChangesAsync();
 
-            return Json(result.Entity);
+            return Json(newId);
         }
 
         //Delete a user
@@ -126,7 +118,6 @@ namespace King_Price_Assessment.Controllers
             string SURNAME = nameof(Models.User.Surname);
             string EMAIL = nameof(Models.User.Email);
             string PHONE_NUMBER = nameof(Models.User.PhoneNumber);
-            string GROUPS = nameof(Models.User.Groups);
 
             if (values.Contains(ID))
             {
@@ -152,25 +143,18 @@ namespace King_Price_Assessment.Controllers
                 model.PhoneNumber = Convert.ToString(values[PHONE_NUMBER]);
             }
 
-            //TO-DO deal with this
-            //if (values.Contains(GROUPS))
-            //{
-            //    model.Groups = Convert.ToString(values[GROUPS]);
-            //}
-
         }
 
-        private string GetFullErrorMessage(ModelStateDictionary modelState)
+        private void SetUserGroups(User user, string values)
         {
-            var messages = new List<string>();
+            var dictionary = JsonConvert.DeserializeObject<IDictionary>(values);
+            var groupIds = Convert.ToString(dictionary[nameof(Models.User.Groups)]).Split(",");
+            var availableGroups = _context.Groups.ToList();
 
-            foreach (var entry in modelState)
+            foreach (var gId in groupIds)
             {
-                foreach (var error in entry.Value.Errors)
-                    messages.Add(error.ErrorMessage);
+                user.Groups.Add(availableGroups.First(g => g.Id.Equals(Guid.Parse(gId))));
             }
-
-            return String.Join(" ", messages);
         }
     }
 }

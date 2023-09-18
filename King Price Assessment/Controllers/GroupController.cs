@@ -1,6 +1,7 @@
 ﻿using King_Price_Assessment.Data;
 using King_Price_Assessment.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace King_Price_Assessment.Controllers
@@ -21,11 +22,24 @@ namespace King_Price_Assessment.Controllers
             return Json(GetGroups());
         }
 
+        //Retrieve number of users in each group
+        [HttpGet]
+        public ActionResult GetUserCountForGroups()
+        {
+
+            Dictionary<string, int> usersCount = _context.Groups
+                   .ToDictionary(x => x.Name, x => x.Users.Count);
+
+            return Json(usersCount);
+        }
+
         public List<Group> GetGroups()
         {
             return _context.Groups
-                        .GroupBy(x => x.Name)
-                        .Select(x => x.FirstOrDefault()).ToList();
+                        .Include(x => x.Users)
+                        .Include(x => x.Permissions)
+                        .ToList();
         }
+
     }
 }

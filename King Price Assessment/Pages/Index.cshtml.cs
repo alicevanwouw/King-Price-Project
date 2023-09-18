@@ -28,7 +28,7 @@ public class IndexModel : PageModel
         var actionResult = _userController.Get();
         var actionResultGroup = _groupController.Get();
         var actionResultUserCount = _userController.GetUserCount();
-        var actionResultUserGroupCount = _userController.GetUserCountForGroups();
+        var actionResultUserGroupCount = _groupController.GetUserCountForGroups();
 
         if (actionResult is JsonResult && actionResultGroup is JsonResult)
         {
@@ -44,9 +44,4 @@ public class IndexModel : PageModel
             return actionResult;
         }
     }
-
-    //public void OnGet()
-    //{
-
-    //}
 }
