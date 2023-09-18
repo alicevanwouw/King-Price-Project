@@ -14,8 +14,6 @@ builder.Services.AddDbContext<UserManagementContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddScoped<DatabaseInitializer>();
 builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<GroupController>();
